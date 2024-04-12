@@ -59,23 +59,43 @@ public class BinarySearchTree extends AbstractBinarySearchTree {
         if ( value == null ) {
             throw new IllegalArgumentException ( "Illegal Argument: Cannot insert null value." );
         }
-        return insertHelper(0, value);
+
+        if (size == treeArray.length - 1) {
+            // Tree array is full
+            return false;
+        }
+        if (isEmpty()) {
+            // If the tree is empty, insert at root index
+            treeArray[rootIndex()] = value;
+            size++;
+            return true;
+        } else {
+            return insertHelper(rootIndex(), value);
+        }
     }
 
     private boolean insertHelper( int index, Comparable value ) {
-        if (index >= treeArray.length) { // Check if index is in bounds
-            return false;
+        if (treeArray[index] == null) {
+            treeArray[index] = value; // Value insert in even when empty
+            size++;
+            return true;
         }
 
-        if ( treeArray[index].equals ( value ) ) { //if value already exists
-            return false;
-        } else if ( value.compareTo ( treeArray[index] ) < 0 ) {
-            return insertHelper( leftIndex ( index ), value );
-        } else {
-            return insertHelper( rightIndex ( index ), value );
+        if (value.compareTo(treeArray[index]) < 0) {
+            // Go to left subtree
+            int leftIndex = leftIndex(index);
+            if (leftIndex < treeArray.length) {
+                return insertHelper(leftIndex, value);
+            }
+        } else if (value.compareTo(treeArray[index]) > 0) {
+            // Go to right subtree
+            int rightIndex = rightIndex(index);
+            if (rightIndex < treeArray.length) {
+                return insertHelper(rightIndex, value);
+            }
         }
+        return false;
     }
-
     /**
      * Returns true if the specified value exists in the tree.
      *
@@ -118,7 +138,7 @@ public class BinarySearchTree extends AbstractBinarySearchTree {
     private void inorderTraversal(int index) {
         if (index < treeArray.length && treeArray[index] != null) {
             inorderTraversal(leftIndex(index));
-            System.out.print(treeArray[index] + "");
+            System.out.println(treeArray[index] + "");
             inorderTraversal(rightIndex(index));
         }
     }
